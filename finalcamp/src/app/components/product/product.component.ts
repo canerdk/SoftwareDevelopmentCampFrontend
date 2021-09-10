@@ -13,7 +13,6 @@ export class ProductComponent implements OnInit {
 
   products: Product[] = [];
   dataLoaded = false;
-  categoryId: number = 0;
 
   constructor(private productService: ProductService, private route: ActivatedRoute) { }
 
@@ -21,11 +20,15 @@ export class ProductComponent implements OnInit {
     this.getParamsFromUrl();
   }
 
-  getParamsFromUrl(){
-    this.route.params.subscribe((data) => {
-      this.categoryId = data['id'];
-      this.getProductsByCategory(this.categoryId);
-      this.dataLoaded = true;
+  getParamsFromUrl() {
+    this.route.params.subscribe(params => {
+      if (params['id']) {
+        this.getProductsByCategory(params['id']);
+      } else {
+        this.getProducts();
+      }
+
+
     });
   }
 
@@ -36,9 +39,10 @@ export class ProductComponent implements OnInit {
     });
   }
 
-  getProductsByCategory(categoryId:number) {
+  getProductsByCategory(categoryId: number) {
     this.productService.getProductsByCategory(categoryId).subscribe(response => {
       this.products = response.data;
+      this.dataLoaded = true;
     })
   }
 
